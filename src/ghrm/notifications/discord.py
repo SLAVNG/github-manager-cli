@@ -18,39 +18,36 @@ def validate_webhook_url() -> bool:
     return True
 
 def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -> bool:
-    """
-    Send notification to Discord channel.
-
-    Args:
-        title: Title of the message
-        message: Content of the message
-        color: Color of the embed (default Discord blue)
-
-    Returns:
-        bool: True if notification was sent successfully, False otherwise
-    """
     if not validate_webhook_url():
         return False
 
     webhook_url = get_discord_webhook_url()
 
+    # Ensure the embed is properly formatted
     embed = {
         "title": title,
         "description": message,
-        "color": color
+        "color": color,
+        "type": "rich"  # Adding the type field
     }
 
     payload = {
-        "embeds": [embed]
+        "embeds": [embed],
+        "content": None  # Explicitly set content to None
     }
 
     try:
-        response = requests.post(webhook_url, json=payload)
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            headers={"Content-Type": "application/json"}
+        )
         response.raise_for_status()
         return True
     except requests.exceptions.RequestException as e:
         console.print(f"[bold red]Error sending Discord notification: {str(e)}[/bold red]")
         return False
+
 
 def send_success_notification(title: str, message: str) -> bool:
     """Send a success notification with green color."""
