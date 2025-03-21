@@ -23,17 +23,16 @@ def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -
 
     webhook_url = get_discord_webhook_url()
 
-    # Ensure the embed is properly formatted
     embed = {
         "title": title,
         "description": message,
         "color": color,
-        "type": "rich"  # Adding the type field
+        "type": "rich"
     }
 
     payload = {
         "embeds": [embed],
-        "content": None  # Explicitly set content to None
+        "content": None
     }
 
     try:
