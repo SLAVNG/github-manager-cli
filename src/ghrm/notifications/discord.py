@@ -1,71 +1,65 @@
-# discord.py - Sends notifications to Discord channels
-
 import os
-from datetime import datetime
+from typing import Optional
 import requests
 from rich.console import Console
 
 console = Console()
 
-class DiscordNotifier:
-    def __init__(self):
-        self.webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
-        if not self.webhook_url:
-            console.print("[bold red]Warning: DISCORD_WEBHOOK_URL not set. Notifications will be disabled.[/bold red]")
+def get_discord_webhook_url() -> Optional[str]:
+    """Get Discord webhook URL from environment variable."""
+    return os.getenv('DISCORD_WEBHOOK_URL')
 
-    def send_discord_notification(self, title, description, color=0x00ff00, fields=None):
-        """
-        Send notification to Discord channel
-        color: Discord color code (default: green)
-        fields: List of dicts with name and value pairs
-        """
-        if not self.webhook_url:
-            return
+def validate_webhook_url() -> bool:
+    """Validate if Discord webhook URL is set."""
+    webhook_url = get_discord_webhook_url()
+    if not webhook_url:
+        console.print("[bold red]Warning: DISCORD_WEBHOOK_URL not set. Notifications will be disabled.[/bold red]")
+        return False
+    return True
 
-        embed = {
-            "title": title,
-            "description": description,
-            "color": color,
-            "timestamp": datetime.utcnow().isoformat(),
-            "fields": fields or []
-        }
+def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -> bool:
+    """
+    Send notification to Discord channel.
 
-        data = {
-            "embeds": [embed]
-        }
+    Args:
+        title: Title of the message
+        message: Content of the message
+        color: Color of the embed (default Discord blue)
 
-        try:
-            response = requests.post(
-                self.webhook_url,
-                json=data
-            )
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            console.print(f"[bold red]Failed to send Discord notification: {str(e)}[/bold red]")
+    Returns:
+        bool: True if notification was sent successfully, False otherwise
+    """
+    if not validate_webhook_url():
+        return False
 
-def send_discord_notification(action, details, status="success"):
-    """Helper function to create and send notifications"""
-    notifier = DiscordNotifier()
+    webhook_url = get_discord_webhook_url()
 
-    # Define colors for different statuses
-    colors = {
-        "success": 0x00ff00,  # Green
-        "warning": 0xffff00,  # Yellow
-        "error": 0xff0000,    # Red
-        "info": 0x0000ff     # Blue
+    embed = {
+        "title": title,
+        "description": message,
+        "color": color
     }
 
-    # Create fields based on details
-    fields = []
-    if isinstance(details, dict):
-        fields = [
-            {"name": key, "value": str(value), "inline": True}
-            for key, value in details.items()
-        ]
+    payload = {
+        "embeds": [embed]
+    }
 
-    notifier.send_discord_notification(
-        title=f"GitHub Manager: {action}",
-        description=str(details) if not isinstance(details, dict) else None,
-        color=colors.get(status, 0x00ff00),
-        fields=fields if fields else None
-    )
+    try:
+        response = requests.post(webhook_url, json=payload)
+        response.raise_for_status()
+        return True
+    except requests.exceptions.RequestException as e:
+        console.print(f"[bold red]Error sending Discord notification: {str(e)}[/bold red]")
+        return False
+
+def send_success_notification(title: str, message: str) -> bool:
+    """Send a success notification with green color."""
+    return send_discord_notification(title, message, color=0x2ECC71)
+
+def send_error_notification(title: str, message: str) -> bool:
+    """Send an error notification with red color."""
+    return send_discord_notification(title, message, color=0xFF0000)
+
+def send_warning_notification(title: str, message: str) -> bool:
+    """Send a warning notification with yellow color."""
+    return send_discord_notification(title, message, color=0xFFA500)
