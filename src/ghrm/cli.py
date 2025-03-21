@@ -19,9 +19,7 @@ from .display import (
 
 from .notifications.slack import send_slack_notification
 from .notifications.discord import send_discord_notification
-
-# Load environment variables from .env file
-load_dotenv()
+from .__version__ import VERSION
 
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
@@ -32,15 +30,37 @@ def load_config(config_path):
 
 def run_cli():
     parser = argparse.ArgumentParser(description="GitHub Repository Manager CLI")
-    parser.add_argument("action", choices=[
-        "create",
-        "delete",
-    ], help="Action to perform")
 
-    # Config argument
-    parser.add_argument("--config", help="Path to YAML config file", required=True)
+    parser.add_argument(
+        "-v", "--version",
+        action="store_true",
+        help="Show program's version number and exit"
+    )
+
+    parser.add_argument(
+        "action",
+        choices=["create", "delete"],
+        help="Action to perform",
+        nargs="?"
+    )
+
+    parser.add_argument(
+        "--config",
+        help="Path to YAML config file",
+        required=False
+    )
 
     args = parser.parse_args()
+
+    if args.version:
+        print(f"GitHub Manager CLI Version: {VERSION}")
+        return
+
+    if not args.action:
+        parser.error("action is required when not using --version")
+
+    if not args.config:
+        parser.error("--config is required when performing an action")
 
     config = load_config(args.config)
     repos = config.get('repositories', {})

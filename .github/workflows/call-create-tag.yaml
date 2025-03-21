@@ -1,0 +1,16 @@
+##
+# call-create-tag.yaml
+# Calls remote workflow to crete new git tag.
+##
+---
+name: Create tag
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  call-create-tag:
+    name: Create tag
+    uses: SLAVNG/templates/.github/workflows/create-tag.yaml@main
+    secrets: inherit

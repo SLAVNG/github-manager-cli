@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 [project]
 name = "github-manager-cli"
 description = "A tool to manage GitHub objects"
-version = "0.1"
+dynamic = ["version"]
 authors = [{ name = "Slav", email = "sosadtsia@gmail.com" }]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -43,6 +43,13 @@ Homepage = "https://github.com/SLAVNG/github-manager-cli"
 [tool.pytest.ini_options]
 python_files = "tests/*.py"
 addopts = "--color=yes"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "src/ghrm/__version__.py"
+pattern = "VERSION = \"(?P<version>[^\"]+)\""
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ghrm"]

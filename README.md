@@ -39,6 +39,14 @@ DISCORD_WEBHOOK_URL=your_discord_webhook
 SLACK_WEBHOOK_URL=your_slack_webhook
 ```
 
+## Development
+To run tool with environmental variable defined in `src/.env` file
+
+```sh
+cd src
+dotenv run -- python -m ghrm --help
+```
+
 ## Usage
 To use the GitHub Repository Manager, you can run the `grm` command.
 
