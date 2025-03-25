@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import Mock, patch
 from ghrm.notifications.slack import send_slack_notification
 
-
 @patch("os.getenv")
 @patch("rich.console.Console.print")
 def test_send_slack_notification_without_webhook_url(mock_console_print, mock_getenv):
@@ -13,7 +12,6 @@ def test_send_slack_notification_without_webhook_url(mock_console_print, mock_ge
 
     assert response is None
     mock_console_print.assert_called_once_with("[bold red]Error: SLACK_WEBHOOK_URL is not configured.[/bold red]")
-
 
 @patch("os.getenv")
 @patch("requests.post")
@@ -41,7 +39,6 @@ def test_send_slack_notification_success(mock_console_print, mock_requests_post,
     )
     mock_console_print.assert_called_once_with("[bold green]Notification sent successfully.[/bold green]")
 
-
 @patch("os.getenv")
 @patch("requests.post")
 @patch("rich.console.Console.print")
@@ -67,7 +64,6 @@ def test_send_slack_notification_failure(mock_console_print, mock_requests_post,
         }
     )
     mock_console_print.assert_called_once_with("[bold red]Failed to send notification. Status code: 404[/bold red]")
-
 
 @patch("os.getenv")
 @patch("requests.post")

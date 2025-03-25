@@ -7,8 +7,6 @@ def capture_output(capsys: CaptureFixture):
     """Fixture to capture stdout and stderr"""
     return capsys
 
-# ... other tests remain the same ...
-
 def test_display_list_empty_items(capture_output):
     """Test display_list with empty items list"""
     display_list("Empty List", [], ["Column1", "Column2"])

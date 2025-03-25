@@ -23,6 +23,20 @@ def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -
 
     webhook_url = get_discord_webhook_url()
 
+    # Ensure message is a string
+    if isinstance(message, dict):
+        message = "\n".join([f"{key}: {value}" for key, value in message.items()])
+
+    # Ensure color is an integer (fallback to default if invalid)
+    if not isinstance(color, int):
+        color_map = {
+            "success": 0x2ECC71,  # Green
+            "error": 0xFF0000,    # Red
+            "warning": 0xFFA500,  # Orange
+            "info": 0x7289DA      # Blue
+        }
+        color = color_map.get(color, 0x7289DA)
+
     embed = {
         "title": title,
         "description": message,
@@ -40,12 +54,15 @@ def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -
             json=payload,
             headers={"Content-Type": "application/json"}
         )
-        response.raise_for_status()
-        return True
+        # Treat 204 as a successful response
+        if response.status_code in (200, 204):
+            return True
+        else:
+            console.print(f"[bold red]Failed to send Discord notification. Status code: {response.status_code}[/bold red]")
+            return False
     except requests.exceptions.RequestException as e:
         console.print(f"[bold red]Error sending Discord notification: {str(e)}[/bold red]")
         return False
-
 
 def send_success_notification(title: str, message: str) -> bool:
     """Send a success notification with green color."""
