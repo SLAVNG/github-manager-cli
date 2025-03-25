@@ -5,7 +5,6 @@ import requests
 from rich.console import Console
 from rich.markdown import Markdown
 
-SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 console = Console()
 
 def send_slack_notification(title, details, status="info"):
@@ -19,7 +18,9 @@ def send_slack_notification(title, details, status="info"):
     Returns:
         response: Response object from the Slack API request.
     """
-    if not SLACK_WEBHOOK_URL:
+    # Retrieve the webhook URL dynamically
+    webhook_url = os.getenv("SLACK_WEBHOOK_URL")
+    if not webhook_url:
         console.print("[bold red]Error: SLACK_WEBHOOK_URL is not configured.[/bold red]")
         return None
 
@@ -47,22 +48,10 @@ def send_slack_notification(title, details, status="info"):
         ]
     }
 
-    response = requests.post(SLACK_WEBHOOK_URL, json=payload)
+    response = requests.post(webhook_url, json=payload)
 
     if response.status_code == 200:
         console.print("[bold green]Notification sent successfully.[/bold green]")
     else:
         console.print(f"[bold red]Failed to send notification. Status code: {response.status_code}[/bold red]")
     return response
-
-def format_recommendations_for_notification(recommendations):
-    """
-    Formats recommendations as a message for notifications.
-    Args:
-        recommendations (list): List of recommendation strings.
-
-    Returns:
-        str: Formatted message for notifications.
-    """
-    formatted_message = "Cost Optimization Recommendations:\n" + "\n".join(recommendations)
-    return formatted_message

@@ -26,8 +26,7 @@ def send_discord_notification(title: str, message: str, color: int = 0x7289DA) -
     embed = {
         "title": title,
         "description": message,
-        "color": color,
-        "type": "rich"
+        "color": color
     }
 
     payload = {

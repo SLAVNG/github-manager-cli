@@ -67,6 +67,10 @@ def run_cli():
     description = config.get('description')
 
     def send_notification(action, details, status="success"):
+        # Format details as a string if it's a dictionary
+        if isinstance(details, dict):
+            details = "\n".join([f"{key}: {value}" for key, value in details.items()])
+
         if SLACK_WEBHOOK_URL:
             send_slack_notification(action, details, status)
         if DISCORD_WEBHOOK_URL:
