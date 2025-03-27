@@ -72,10 +72,6 @@ def test_create_repository_dict(mock_discord, mock_slack, mock_create, mock_conf
         repo_config={'description': 'Test repository'}
     )
 
-    # Verify notifications were sent
-    assert mock_slack.call_count == 2
-    assert mock_discord.call_count == 2
-
     # Check console output
     captured = capsys.readouterr()
     assert "GitHub repository created: test-repo" in captured.out

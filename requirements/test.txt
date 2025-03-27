@@ -3,3 +3,4 @@ pytest-cov
 pytest-github-actions-annotate-failures
 pytest-subtests
 responses
+black

@@ -1,4 +1,4 @@
-# slack.py - Sends notifications to Slack channels
+# slack.py - Sends notifications to Slack channel
 
 import os
 import requests

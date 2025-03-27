@@ -40,6 +40,10 @@ dev = ["uv", "black", "pip-tools", "pytest"]
 [project.urls]
 Homepage = "https://github.com/SLAVNG/github-manager-cli"
 
+[tool.black]
+line-length = 88
+skip-string-normalization = true
+
 [tool.pytest.ini_options]
 python_files = "tests/*.py"
 addopts = "--color=yes"
